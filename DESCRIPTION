@@ -1,0 +1,21 @@
+Package: gzmem
+Type: Package
+Title: Better gz in memory compression/decompression
+Version: 0.1.0
+Date: 2016-09-26
+Author: Bob Rudis (bob@rud.is), Duncan Temple Lang (Rcompression)
+Maintainer: Bob Rudis <bob@rud.is>
+Description: Better gz in memory compression/decompression
+URL: http://gitlab.com/hrbrmstr/gzmem
+BugReports: https://gitlab.com/hrbrmstr/gzmem/issues
+License: AGPL
+SystemRequirements: zlib
+RequiresCompilation: yes
+Suggests:
+    testthat
+Depends:
+    R (>= 3.0.0)
+Imports:
+    Rcpp
+LinkingTo: Rcpp
+RoxygenNote: 5.0.1

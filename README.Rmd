@@ -1,0 +1,61 @@
+---
+output: rmarkdown::github_document
+---
+
+`gzmem` : Better gz in memory compression/decompression
+
+A partial resurrection of `Rcompression` for [this](http://stackoverflow.com/q/39707388/1457051).
+
+The following functions are implemented:
+
+- `mem_compress`:	Compress a raw vector using gz compression
+- `mem_inflate`:	Inflate a raw vector that was gz compressed
+
+### TODO
+
+- [ ] Rewrite in Rcpp
+- [ ] Make inflation dynamic vs relying on guessed bufffer size
+
+### Installation
+
+```{r eval=FALSE}
+devtools::install_git("https://gitlab.com/hrbrmstr/gzmem.git")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, error=FALSE}
+options(width=120)
+```
+
+### Usage
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+library(gzmem)
+library(magrittr)
+
+# current verison
+packageVersion("gzmem")
+
+text <- "Hey, the room is getting smaller. No, it's not. *He's* getting *bigger*!"
+
+text %>% 
+  charToRaw() %>% 
+  mem_compress()
+
+text %>% 
+  charToRaw() %>% 
+  mem_compress() %>% 
+  mem_inflate(1024) %>% 
+  rawToChar()
+```
+
+### Test Results
+
+```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
+library(gzmem)
+library(testthat)
+
+date()
+
+test_dir("tests/")
+```
+
