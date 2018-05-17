@@ -9,8 +9,8 @@
 #' @examples
 #' rawToChar(mem_inflate(mem_compress(
 #'   charToRaw("The quick brown fox jumps over the lazy dog.")), 1000))
-mem_compress <- function(r_content) {
-    .Call('gzmem_mem_compress', PACKAGE = 'gzmem', r_content)
+mem_compress <- function(r_content, format) {
+    .Call('_gzmem_mem_compress', PACKAGE = 'gzmem', r_content, format)
 }
 
 #' Inflate a raw vector that was gz compressed
@@ -28,6 +28,6 @@ mem_compress <- function(r_content) {
 #' rawToChar(mem_inflate(mem_compress(
 #'   charToRaw("The quick brown fox jumps over the lazy dog.")), 1000))
 mem_inflate <- function(r_source, r_guess_size) {
-    .Call('gzmem_mem_inflate', PACKAGE = 'gzmem', r_source, r_guess_size)
+    .Call('_gzmem_mem_inflate', PACKAGE = 'gzmem', r_source, r_guess_size)
 }
 

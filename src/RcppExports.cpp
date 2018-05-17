@@ -6,19 +6,20 @@
 using namespace Rcpp;
 
 // mem_compress
-SEXP mem_compress(SEXP r_content);
-RcppExport SEXP gzmem_mem_compress(SEXP r_contentSEXP) {
+SEXP mem_compress(SEXP r_content, String format);
+RcppExport SEXP _gzmem_mem_compress(SEXP r_contentSEXP, SEXP formatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type r_content(r_contentSEXP);
-    rcpp_result_gen = Rcpp::wrap(mem_compress(r_content));
+    Rcpp::traits::input_parameter< String >::type format(formatSEXP);
+    rcpp_result_gen = Rcpp::wrap(mem_compress(r_content, format));
     return rcpp_result_gen;
 END_RCPP
 }
 // mem_inflate
 SEXP mem_inflate(SEXP r_source, SEXP r_guess_size);
-RcppExport SEXP gzmem_mem_inflate(SEXP r_sourceSEXP, SEXP r_guess_sizeSEXP) {
+RcppExport SEXP _gzmem_mem_inflate(SEXP r_sourceSEXP, SEXP r_guess_sizeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -27,4 +28,15 @@ BEGIN_RCPP
     rcpp_result_gen = Rcpp::wrap(mem_inflate(r_source, r_guess_size));
     return rcpp_result_gen;
 END_RCPP
+}
+
+static const R_CallMethodDef CallEntries[] = {
+    {"_gzmem_mem_compress", (DL_FUNC) &_gzmem_mem_compress, 2},
+    {"_gzmem_mem_inflate", (DL_FUNC) &_gzmem_mem_inflate, 2},
+    {NULL, NULL, 0}
+};
+
+RcppExport void R_init_gzmem(DllInfo *dll) {
+    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
+    R_useDynamicSymbols(dll, FALSE);
 }

@@ -22,12 +22,22 @@ static void R_zlib_free(voidpf ptr, voidpf addr) {}
 //' rawToChar(mem_inflate(mem_compress(
 //'   charToRaw("The quick brown fox jumps over the lazy dog.")), 1000))
 // [[Rcpp::export]]
-SEXP mem_compress(SEXP r_content) {
+SEXP mem_compress(SEXP r_content, String format) {
 
-  int status, numProtects = 0, level = 1, method = Z_DEFLATED,
-      windowBits = 15+16, memLevel = 9, strategy = 0;
+  int status, windowBits, numProtects = 0, level = 1, method = Z_DEFLATED, memLevel = 9, strategy = 0;
   uLongf destLen = 0;
   z_stream strm;
+
+  if (format == "gzip"){
+    windowBits = 15+16;
+  } else if (format == "zlib"){
+    windowBits = 15;
+  } else if (format == "raw"){
+    windowBits = -15;
+  } else {
+    windowBits = 0;
+  }
+
 
   strm.zalloc = NULL;
   strm.zfree = NULL;
@@ -100,7 +110,7 @@ SEXP mem_inflate(SEXP r_source, SEXP r_guess_size) {
   stream.zfree = R_zlib_free;
   stream.opaque = NULL;
 
-  err = inflateInit2(&stream, MAX_WBITS+16);
+  err = inflateInit2(&stream, -MAX_WBITS);
   if(err != Z_OK) {
     Rcpp::stop("cannot establish the uncompress/inflate stream on this data");
   }
