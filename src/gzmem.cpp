@@ -35,7 +35,7 @@ SEXP mem_compress(SEXP r_content, String format) {
   } else if (format == "raw"){
     windowBits = -15;
   } else {
-    windowBits = 0;
+    Rcpp::stop("Invalid format argument");
   }
 
 
@@ -108,7 +108,7 @@ SEXP mem_inflate(SEXP r_source, String format, SEXP r_guess_size) {
   } else if (format == "raw"){
     windowBits = -MAX_WBITS;
   } else {
-    windowBits = 0;
+    Rcpp::stop("Invalid format argument");
   }
 
   stream.next_in = RAW(r_source);
