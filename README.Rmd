@@ -1,5 +1,7 @@
 ---
 output: rmarkdown::github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 `gzmem` : Better gz in memory compression/decompression
@@ -39,12 +41,12 @@ text <- "Hey, the room is getting smaller. No, it's not. *He's* getting *bigger*
 
 text %>% 
   charToRaw() %>% 
-  mem_compress()
+  mem_compress(format = "gzip")
 
 text %>% 
   charToRaw() %>% 
-  mem_compress() %>% 
-  mem_inflate(1024) %>% 
+  mem_compress(format = "gzip") %>% 
+  mem_inflate(format = "gzip", 1024) %>% 
   rawToChar()
 ```
 
