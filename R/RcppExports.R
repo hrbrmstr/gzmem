@@ -27,7 +27,7 @@ mem_compress <- function(r_content, format) {
 #' @examples
 #' rawToChar(mem_inflate(mem_compress(
 #'   charToRaw("The quick brown fox jumps over the lazy dog.")), 1000))
-mem_inflate <- function(r_source, r_guess_size) {
-    .Call('_gzmem_mem_inflate', PACKAGE = 'gzmem', r_source, r_guess_size)
+mem_inflate <- function(r_source, format, r_guess_size) {
+    .Call('_gzmem_mem_inflate', PACKAGE = 'gzmem', r_source, format, r_guess_size)
 }
 

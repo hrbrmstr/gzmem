@@ -94,12 +94,22 @@ SEXP mem_compress(SEXP r_content, String format) {
 //' rawToChar(mem_inflate(mem_compress(
 //'   charToRaw("The quick brown fox jumps over the lazy dog.")), 1000))
 // [[Rcpp::export]]
-SEXP mem_inflate(SEXP r_source, SEXP r_guess_size) {
+SEXP mem_inflate(SEXP r_source, String format, SEXP r_guess_size) {
 
   z_stream stream;
-  int err, len, guess_size = REAL(r_guess_size)[0];
+  int err, len, guess_size = REAL(r_guess_size)[0], windowBits;
   unsigned char *ans = (unsigned char *)R_alloc(guess_size, sizeof(unsigned char));
   SEXP r_ans;
+
+  if (format == "gzip"){
+    windowBits = MAX_WBITS+16;
+  } else if (format == "zlib"){
+    windowBits = MAX_WBITS;
+  } else if (format == "raw"){
+    windowBits = -MAX_WBITS;
+  } else {
+    windowBits = 0;
+  }
 
   stream.next_in = RAW(r_source);
   stream.avail_in = GET_LENGTH(r_source);
@@ -110,7 +120,7 @@ SEXP mem_inflate(SEXP r_source, SEXP r_guess_size) {
   stream.zfree = R_zlib_free;
   stream.opaque = NULL;
 
-  err = inflateInit2(&stream, -MAX_WBITS);
+  err = inflateInit2(&stream, windowBits);
   if(err != Z_OK) {
     Rcpp::stop("cannot establish the uncompress/inflate stream on this data");
   }
