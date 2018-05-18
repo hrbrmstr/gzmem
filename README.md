@@ -36,7 +36,7 @@ text <- "Hey, the room is getting smaller. No, it's not. *He's* getting *bigger*
 
 text %>% 
   charToRaw() %>% 
-  mem_compress()
+  mem_compress(format = "gzip")
 ```
 
     ##  [1] 1f 8b 08 00 00 00 00 00 04 03 3d ca b1 09 c0 30 0c 04 c0 55 3e 95 41 18 cf e1 2a 3b 24 f0 28 02 db 02 4b 4d b6 4f
@@ -46,8 +46,8 @@ text %>%
 ``` r
 text %>% 
   charToRaw() %>% 
-  mem_compress() %>% 
-  mem_inflate(1024) %>% 
+  mem_compress(format = "gzip") %>% 
+  mem_inflate(format = "gzip", 1024) %>% 
   rawToChar()
 ```
 
@@ -62,13 +62,22 @@ library(testthat)
 date()
 ```
 
-    ## [1] "Mon Sep 26 14:16:11 2016"
+    ## [1] "Fri May 18 09:34:26 2018"
 
 ``` r
 test_dir("tests/")
 ```
 
-    ## testthat results ========================================================================================================
-    ## OK: 1 SKIPPED: 0 FAILED: 0
+    ## ✔ | OK F W S | Context
+    ## ══ testthat results  ═══════════════════════════════════════════════════════════════════════════════════════════════════════════
+    ## OK: 3 SKIPPED: 0 FAILED: 0
     ## 
-    ## DONE ===================================================================================================================
+    ## ══ Results ═════════════════════════════════════════════════════════════════════════════════════════════════════════════════════
+    ## Duration: 0.2 s
+    ## 
+    ## OK:       0
+    ## Failed:   0
+    ## Warnings: 0
+    ## Skipped:  0
+    ## 
+    ## You are a coding rockstar!
