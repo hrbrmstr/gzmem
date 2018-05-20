@@ -31,9 +31,9 @@ packageVersion("gzmem")
 
 ### Usage
 
-This package contains functions to compress and decompress raw vectors in R using the zlib library (<https://zlib.net/>).
+This package contains functions to compress and decompress raw vectors in R using the [zlib library](https://zlib.net/).
 
-It supports 3 different formats: gzip, zlib and raw. These formats all use the deflate algorithm to compress the data (<https://en.wikipedia.org/wiki/DEFLATE>), but differ in the headers and footers they wrap around the deflate compressed data:
+It supports 3 different formats: gzip, zlib and raw. These formats all use the [deflate algorithm](https://en.wikipedia.org/wiki/DEFLATE) to compress the data, but differ in the headers and footers they wrap around the deflate compressed data:
 
 -   gzip has a 10 byte header and an 8 byte footer around the compressed data.
 -   zlib has a 2 byte header and a 4 byte footer around the compressed data.
@@ -94,7 +94,7 @@ library(testthat)
 date()
 ```
 
-    ## [1] "Sun May 20 16:57:33 2018"
+    ## [1] "Sun May 20 16:59:37 2018"
 
 ``` r
 test_dir("tests/")
@@ -105,7 +105,7 @@ test_dir("tests/")
     ## OK: 3 SKIPPED: 0 FAILED: 0
     ## 
     ## ══ Results ════════════════════════════════════════════════════════════════════════════════════════
-    ## Duration: 0.2 s
+    ## Duration: 0.3 s
     ## 
     ## OK:       0
     ## Failed:   0
