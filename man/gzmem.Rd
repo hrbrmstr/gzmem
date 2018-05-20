@@ -12,4 +12,3 @@ A partial resurrection of `Rcompression` for
 \author{
 Bob Rudis (@hrbrmstr)
 }
-
