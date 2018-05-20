@@ -13,21 +13,34 @@ static voidpf R_zlib_alloc(voidpf ptr, uInt items, uInt size) {
 
 static void R_zlib_free(voidpf ptr, voidpf addr) {}
 
-//' Compress a raw vector using gz compression
+//' Compress a raw vector
 //'
-//' @param r_content raw vector of data to compress
-//' @return Raw vector of compressed data
+//' @param r_content Raw vector of data to compress.
+//' @param format A character scalar indicating the type of compression to apply.
+//' This must be one of "gzip", "zlib" or "raw".
+//' @return Raw vector of compressed data.
 //' @export
 //' @examples
-//' rawToChar(mem_inflate(mem_compress(
-//'   charToRaw("The quick brown fox jumps over the lazy dog.")), 1000))
+//' raw <- charToRaw("The quick brown fox jumps over the lazy dog.")
+//' compressed <- mem_compress(raw, format = "gzip")
+//' decompressed <- mem_inflate(compressed, format = "gzip", 1000)
 // [[Rcpp::export]]
-SEXP mem_compress(SEXP r_content) {
+SEXP mem_compress(SEXP r_content, String format) {
 
-  int status, numProtects = 0, level = 1, method = Z_DEFLATED,
-      windowBits = 15+16, memLevel = 9, strategy = 0;
+  int status, windowBits, numProtects = 0, level = 1, method = Z_DEFLATED, memLevel = 9, strategy = 0;
   uLongf destLen = 0;
   z_stream strm;
+
+  if (format == "gzip"){
+    windowBits = 15+16;
+  } else if (format == "zlib"){
+    windowBits = 15;
+  } else if (format == "raw"){
+    windowBits = -15;
+  } else {
+    Rcpp::stop("Invalid format argument");
+  }
+
 
   strm.zalloc = NULL;
   strm.zfree = NULL;
@@ -69,27 +82,40 @@ SEXP mem_compress(SEXP r_content) {
 
 }
 
-//' Inflate a raw vector that was gz compressed
+//' Inflate a raw vector that was compressed
 //'
-//' @param r_source raw vector of gz compressed data
+//' @param r_source raw vector of compressed data.
+//' @param format A character scalar indicating the type of compression that was applied.
+//' This must be one of "gzip", "zlib" or "raw".
 //' @param r_guess_size your best guess as to the size of uncompressed data. Not ideal,
 //'        and this won't be necessary in future releases. Reember, this is a direct
 //'        port from the defunct \code{Rcompression} package.\cr
 //'        \cr
 //'        Aim high as you'll only get back the actual number of bytes
 //'        in the uncompressed data.
-//' @param Raw vector of expanded data
+//' @return Raw vector of expanded data.
 //' @export
 //' @examples
-//' rawToChar(mem_inflate(mem_compress(
-//'   charToRaw("The quick brown fox jumps over the lazy dog.")), 1000))
+//' raw <- charToRaw("The quick brown fox jumps over the lazy dog.")
+//' compressed <- mem_compress(raw, format = "gzip")
+//' decompressed <- mem_inflate(compressed, format = "gzip", 1000)
 // [[Rcpp::export]]
-SEXP mem_inflate(SEXP r_source, SEXP r_guess_size) {
+SEXP mem_inflate(SEXP r_source, String format, SEXP r_guess_size) {
 
   z_stream stream;
-  int err, len, guess_size = REAL(r_guess_size)[0];
+  int err, len, guess_size = REAL(r_guess_size)[0], windowBits;
   unsigned char *ans = (unsigned char *)R_alloc(guess_size, sizeof(unsigned char));
   SEXP r_ans;
+
+  if (format == "gzip"){
+    windowBits = MAX_WBITS+16;
+  } else if (format == "zlib"){
+    windowBits = MAX_WBITS;
+  } else if (format == "raw"){
+    windowBits = -MAX_WBITS;
+  } else {
+    Rcpp::stop("Invalid format argument");
+  }
 
   stream.next_in = RAW(r_source);
   stream.avail_in = GET_LENGTH(r_source);
@@ -100,7 +126,7 @@ SEXP mem_inflate(SEXP r_source, SEXP r_guess_size) {
   stream.zfree = R_zlib_free;
   stream.opaque = NULL;
 
-  err = inflateInit2(&stream, MAX_WBITS+16);
+  err = inflateInit2(&stream, windowBits);
   if(err != Z_OK) {
     Rcpp::stop("cannot establish the uncompress/inflate stream on this data");
   }

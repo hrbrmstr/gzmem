@@ -2,21 +2,24 @@
 % Please edit documentation in R/RcppExports.R
 \name{mem_compress}
 \alias{mem_compress}
-\title{Compress a raw vector using gz compression}
+\title{Compress a raw vector}
 \usage{
-mem_compress(r_content)
+mem_compress(r_content, format)
 }
 \arguments{
-\item{r_content}{raw vector of data to compress}
+\item{r_content}{Raw vector of data to compress.}
+
+\item{format}{A character scalar indicating the type of compression to apply.
+This must be one of "gzip", "zlib" or "raw".}
 }
 \value{
-Raw vector of compressed data
+Raw vector of compressed data.
 }
 \description{
-Compress a raw vector using gz compression
+Compress a raw vector
 }
 \examples{
-rawToChar(mem_inflate(mem_compress(
-  charToRaw("The quick brown fox jumps over the lazy dog.")), 1000))
+raw <- charToRaw("The quick brown fox jumps over the lazy dog.")
+compressed <- mem_compress(raw, format = "gzip")
+decompressed <- mem_inflate(compressed, format = "gzip", 1000)
 }
-

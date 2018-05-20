@@ -2,12 +2,15 @@
 % Please edit documentation in R/RcppExports.R
 \name{mem_inflate}
 \alias{mem_inflate}
-\title{Inflate a raw vector that was gz compressed}
+\title{Inflate a raw vector that was compressed}
 \usage{
-mem_inflate(r_source, r_guess_size)
+mem_inflate(r_source, format, r_guess_size)
 }
 \arguments{
-\item{r_source}{raw vector of gz compressed data}
+\item{r_source}{raw vector of compressed data.}
+
+\item{format}{A character scalar indicating the type of compression that was applied.
+This must be one of "gzip", "zlib" or "raw".}
 
 \item{r_guess_size}{your best guess as to the size of uncompressed data. Not ideal,
 and this won't be necessary in future releases. Reember, this is a direct
@@ -15,14 +18,15 @@ port from the defunct \code{Rcompression} package.\cr
 \cr
 Aim high as you'll only get back the actual number of bytes
 in the uncompressed data.}
-
-\item{Raw}{vector of expanded data}
+}
+\value{
+Raw vector of expanded data.
 }
 \description{
-Inflate a raw vector that was gz compressed
+Inflate a raw vector that was compressed
 }
 \examples{
-rawToChar(mem_inflate(mem_compress(
-  charToRaw("The quick brown fox jumps over the lazy dog.")), 1000))
+raw <- charToRaw("The quick brown fox jumps over the lazy dog.")
+compressed <- mem_compress(raw, format = "gzip")
+decompressed <- mem_inflate(compressed, format = "gzip", 1000)
 }
-

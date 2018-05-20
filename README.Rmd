@@ -2,14 +2,14 @@
 output: rmarkdown::github_document
 ---
 
-`gzmem` : Better gz in memory compression/decompression
+`gzmem` : Better in memory compression/decompression
 
 A partial resurrection of `Rcompression` for [this](http://stackoverflow.com/q/39707388/1457051).
 
 The following functions are implemented:
 
-- `mem_compress`:	Compress a raw vector using gz compression
-- `mem_inflate`:	Inflate a raw vector that was gz compressed
+- `mem_compress`:	Compress a raw vector
+- `mem_inflate`:	Inflate a raw vector compressed
 
 ### TODO
 
@@ -26,27 +26,67 @@ devtools::install_git("https://gitlab.com/hrbrmstr/gzmem.git")
 options(width=120)
 ```
 
-### Usage
-
 ```{r echo=TRUE, message=FALSE, warning=FALSE, error=FALSE}
 library(gzmem)
 library(magrittr)
 
 # current verison
 packageVersion("gzmem")
+```
 
+### Usage
+
+This package contains functions to compress and decompress raw vectors in R using the [zlib library](https://zlib.net/). 
+
+It supports 3 different formats: gzip, zlib and raw. These formats all use the [deflate algorithm](https://en.wikipedia.org/wiki/DEFLATE) to compress the data, but differ in the headers and footers they wrap around the deflate compressed data:
+
+- gzip has a 10 byte header and an 8 byte footer around the compressed data.
+- zlib has a 2 byte header and a 4 byte footer around the compressed data.
+- raw has no header or footer, and so is just the deflate compressed data.
+
+For example:
+
+```{r}
 text <- "Hey, the room is getting smaller. No, it's not. *He's* getting *bigger*!"
+```
 
-text %>% 
-  charToRaw() %>% 
-  mem_compress()
+Shows the following differences between all 3 formats:
 
-text %>% 
+```{r}
+gzip <- text %>% 
   charToRaw() %>% 
-  mem_compress() %>% 
-  mem_inflate(1024) %>% 
+  mem_compress(format = "gzip")
+```
+```{r,echo=F}
+gzip
+```
+```{r}
+zlib <- text %>% 
+  charToRaw() %>% 
+  mem_compress(format = "zlib")
+```
+```{r, echo=F}
+zlib
+```
+```{r}
+raw <- text %>% 
+  charToRaw() %>% 
+  mem_compress(format = "raw")
+```
+```{r, echo=F}
+raw
+```
+
+These can then be decompressed by selecting the appropriate format:
+
+```{r}
+gzip %>%
+  mem_inflate(format = "gzip", 1024) %>% 
   rawToChar()
 ```
+
+
+
 
 ### Test Results
 
